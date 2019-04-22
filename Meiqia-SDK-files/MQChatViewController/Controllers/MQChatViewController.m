@@ -104,6 +104,11 @@ static CGFloat const kMQChatViewInputBarHeight = 80.0;
     [[UIApplication sharedApplication] setStatusBarStyle:[MQChatViewConfig sharedConfig].chatViewStyle.statusBarStyle];
     [self setNeedsStatusBarAppearanceUpdate];
     
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wconversion"
+    [self.navigationController.navigationBar setBarStyle:[MQChatViewConfig sharedConfig].chatViewStyle.statusBarStyle];
+#pragma clang diagnostic pop
+
     sendTime = [NSDate timeIntervalSinceReferenceDate];
     self.view.backgroundColor = [MQChatViewConfig sharedConfig].chatViewStyle.backgroundColor ?: [UIColor colorWithWhite:0.95 alpha:1];
     [self initChatTableView];
