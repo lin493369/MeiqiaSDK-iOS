@@ -182,6 +182,7 @@
     if (!_contentWebView) {
         _contentWebView = [MQEmbededWebView new];
         _contentWebView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        _contentWebView.scrollView.scrollEnabled = YES;
     }
     return _contentWebView;
 }
