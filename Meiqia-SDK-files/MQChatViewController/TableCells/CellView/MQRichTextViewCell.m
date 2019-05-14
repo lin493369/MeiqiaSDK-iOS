@@ -111,8 +111,9 @@ CGFloat internalImageWidth = 80;
         
         tempText = nil;
     }
-    
-    return html;
+    html = [html stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@" "].mutableCopy;
+    html = [html stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].mutableCopy;
+    return html.copy;
 }
 
 - (void)setupUI {
