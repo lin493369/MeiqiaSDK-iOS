@@ -1159,10 +1159,13 @@ static NSInteger const kMQChatGetHistoryMessageNumber = 20;
     BOOL needsResort = NO;
 
     // find earliest message
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wuninitialized"
     MQBaseMessage *earliest = [messages reduce:[messages firstObject] step:^id(MQBaseMessage *current, MQBaseMessage *element) {
         return [[earliest date] compare:[element date]] == NSOrderedDescending ? element : current;
     }];
-    
+#pragma clang diagnostic pop
+
     if ([[earliest date] compare:[[self.cellModels lastObject] getCellDate]] == NSOrderedAscending) {
         needsResort = YES;
     }

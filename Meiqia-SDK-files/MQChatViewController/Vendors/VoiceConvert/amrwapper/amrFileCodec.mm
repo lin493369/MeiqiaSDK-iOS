@@ -261,8 +261,12 @@ int caclAMRFrameSize(unsigned char frameHeader)
 // 返回值: 0-出错; 1-正确
 int ReadAMRFrameFirst(FILE* fpamr, unsigned char frameBuffer[], int* stdFrameSize, unsigned char* stdFrameHeader)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wsizeof-pointer-memaccess"
+#pragma clang diagnostic ignored "-Wsizeof-array-argument"
 	memset(frameBuffer, 0, sizeof(frameBuffer));
-	
+#pragma clang diagnostic pop
+
 	// 先读帧头
 	fread(stdFrameHeader, 1, sizeof(unsigned char), fpamr);
 	if (feof(fpamr)) return 0;
@@ -283,9 +287,13 @@ int ReadAMRFrame(FILE* fpamr, unsigned char frameBuffer[], int stdFrameSize, uns
 {
 	int bytes = 0;
 	unsigned char frameHeader; // 帧头
-	
+    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wsizeof-pointer-memaccess"
+#pragma clang diagnostic ignored "-Wsizeof-array-argument"
 	memset(frameBuffer, 0, sizeof(frameBuffer));
-	
+#pragma clang diagnostic pop
+
 	// 读帧头
 	// 如果是坏帧(不是标准帧头)，则继续读下一个字节，直到读到标准帧头
 	while(1)
