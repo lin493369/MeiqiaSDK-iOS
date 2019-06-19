@@ -550,7 +550,7 @@ static CGFloat const kMQChatViewInputBarHeight = 80.0;
     
     [self.chatViewService sendTextMessageWithContent:text];
     sendTime = [NSDate timeIntervalSinceReferenceDate];
-    [self chatTableViewScrollToBottomWithAnimated:YES];
+    [self chatTableViewScrollToBottomWithAnimated:NO];
     return YES;
 }
 

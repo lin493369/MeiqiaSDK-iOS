@@ -73,7 +73,7 @@
 //    }
     CGFloat distanceFromBottom = self.contentSize.height - self.contentOffset.y;
     
-    if (distanceFromBottom <= self.frame.size.height + 200){
+    if (distanceFromBottom <= self.frame.size.height + 300){
         return YES;
     }
     return NO;

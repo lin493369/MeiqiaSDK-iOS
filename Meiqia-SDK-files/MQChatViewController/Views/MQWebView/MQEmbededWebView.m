@@ -94,10 +94,10 @@
     }
     
 //    CGFloat height = [[webView stringByEvaluatingJavaScriptFromString:@"document.body.scrollHeight"] floatValue];
-    CGFloat height = [webView sizeThatFits:CGSizeZero].height;
-
-    if (self.loadComplete) {
-        self.loadComplete(height);
-    }
+//    CGFloat height = [webView sizeThatFits:CGSizeZero].height;
+//
+//    if (self.loadComplete) {
+//        self.loadComplete(height);
+//    }
 }
 @end
