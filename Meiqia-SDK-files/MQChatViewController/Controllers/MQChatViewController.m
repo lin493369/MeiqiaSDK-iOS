@@ -80,7 +80,9 @@ static CGFloat const kMQChatViewInputBarHeight = 80.0;
     NSLog(@"清除chatViewController");
     [self removeDelegateAndObserver];
     [chatViewConfig setConfigToDefault];
-    [self.chatViewService setCurrentInputtingText:[(MQTabInputContentView *)self.bottomBar.contentView textField].text];
+    if (_bottomBar && _chatViewService) {
+        [_chatViewService setCurrentInputtingText:[(MQTabInputContentView *)_bottomBar.contentView textField].text];
+    }
     [self closeMeiqiaChatView];
     [MQCustomizedUIText reset];
 
@@ -230,14 +232,17 @@ static CGFloat const kMQChatViewInputBarHeight = 80.0;
     [[UIApplication sharedApplication] setStatusBarHidden:previousStatusBarHidden];
     
     [MQServiceToViewInterface completeChat];
-    
-    
+
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
     [self.keyboardView beginListeningForKeyboard];
+    
+    if (self.bottomBar) {
+        [(MQTabInputContentView *)self.bottomBar.contentView textField].text = [self.chatViewService getPreviousInputtingText];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
