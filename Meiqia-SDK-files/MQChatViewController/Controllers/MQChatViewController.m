@@ -56,6 +56,7 @@ static CGFloat const kMQChatViewInputBarHeight = 80.0;
 @property (nonatomic, strong) MQRecordView *recordView;
 @property (nonatomic, strong) MQRecorderView *displayRecordView;//只用来显示
 @property (nonatomic, assign) BOOL needScrollEnd;//是否需要滚动到底部
+@property (nonatomic, assign) CGRect lastKeyBoardFrameChange; // 上一次的键盘 frame，判断键盘 frame 是否改变
 
 @end
 
@@ -1040,17 +1041,6 @@ static CGFloat const kMQChatViewInputBarHeight = 80.0;
 }
 
 - (void)changeInputBarBottomLayoutGuideConstant:(CGFloat)height {
-    //xlp 收回键盘 时 减去 34 todo
-    if (MQToolUtil.kXlpObtainDeviceVersionIsIphoneX ) {
-        if (height == 0) {
-            height = 34;
-            
-        } else if(height == emojikeyboardHeight) {
-            // 点击表情 弹出表情键盘时
-            height += 34;
-            
-        }
-    }
     
     self.constraintInputBarBottom.constant = height;
     
@@ -1061,28 +1051,23 @@ static CGFloat const kMQChatViewInputBarHeight = 80.0;
 #pragma mark - keyboard controller delegate
 - (void)keyboardController:(MQKeyboardController *)keyboardController keyboardChangeFrame:(CGRect)keyboardFrame isImpressionOfGesture:(BOOL)isImpressionOfGesture {
     
+    if (CGRectEqualToRect(_lastKeyBoardFrameChange, keyboardFrame)) {
+        return;
+    }
+    _lastKeyBoardFrameChange = keyboardFrame;
+    
     CGFloat viewHeight = self.navigationController.navigationBar.translucent ? CGRectGetMaxY(self.view.frame) : CGRectGetMaxY(self.view.frame) - MQToolUtil.kXlpObtainNaviHeight;
     
     CGFloat heightFromBottom = MAX(0.0, viewHeight - CGRectGetMinY(keyboardFrame));
     
     if (!isImpressionOfGesture) {
         
-        if (MQToolUtil.kXlpObtainDeviceVersionIsIphoneX ) {
-            
-            CGFloat diff = heightFromBottom - self.constraintInputBarBottom.constant + 34;
-            if (diff < self.chatTableView.contentInset.top + self.chatTableView.contentSize.height) {
-                self.chatTableView.contentOffset = CGPointMake(self.chatTableView.contentOffset.x, self.chatTableView.contentOffset.y + diff);
-            }
-            
-        }else{
-            
-            CGFloat diff = heightFromBottom - self.constraintInputBarBottom.constant;
-            if (diff < self.chatTableView.contentInset.top + self.chatTableView.contentSize.height) {
-                self.chatTableView.contentOffset = CGPointMake(self.chatTableView.contentOffset.x, self.chatTableView.contentOffset.y + diff);
-            }
+        CGFloat diff = heightFromBottom - self.constraintInputBarBottom.constant;
+        if (diff < self.chatTableView.contentInset.top + self.chatTableView.contentSize.height) {
+            self.chatTableView.contentOffset = CGPointMake(self.chatTableView.contentOffset.x, self.chatTableView.contentOffset.y + diff);
         }
+        
     }
-    
     [self changeInputBarBottomLayoutGuideConstant:heightFromBottom];
 }
 
