@@ -89,11 +89,12 @@
 }
 
 - (void)tapTipCell:(id)sender {
-    if ([tipsLabel.text isEqualToString:[MQBundleUtil localizedStringForKey:@"reply_tip_text"]]) {
+    if (tipType == MQTipTypeReply) {
         if ([self.chatCellDelegate respondsToSelector:@selector(didTapReplyBtn)]) {
             [self.chatCellDelegate didTapReplyBtn];
         }
     }
+    
     NSArray *botRedirectArray = @[[MQBundleUtil localizedStringForKey:@"bot_redirect_tip_text"], [MQBundleUtil localizedStringForKey:@"bot_manual_redirect_tip_text"]];
     if ([botRedirectArray containsObject:tipsLabel.text]) {
         if ([self.chatCellDelegate respondsToSelector:@selector(didTapBotRedirectBtn)]) {

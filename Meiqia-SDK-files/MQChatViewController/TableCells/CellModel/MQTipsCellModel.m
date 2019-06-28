@@ -12,6 +12,7 @@
 #import "MQStringSizeUtil.h"
 #import "MQChatViewConfig.h"
 #import "MQBundleUtil.h"
+#import <MeiQiaSDK/MeiQiaSDK.h>
 
 
 
@@ -131,7 +132,14 @@ CGFloat const kMQMessageTipsFontSize = 13.0;
         self.tipType = tipType;
         self.date = [NSDate date];
         if (tipType == MQTipTypeReply) {
-            self.tipText = [MQBundleUtil localizedStringForKey:@"reply_tip_text"];
+            [MQManager getMessageFormConfigComplete:^(MQEnterpriseConfig *config, NSError *error) {
+                NSString *localIntro = [MQBundleUtil localizedStringForKey:@"reply_tip_text"];
+                if (!error && config) {
+                    self.tipText = config.intro?:localIntro;
+                }else{
+                    self.tipText = localIntro;
+                }
+            }];
         } else if (tipType == MQTipTypeBotRedirect) {
             self.tipText = [MQBundleUtil localizedStringForKey:@"bot_redirect_tip_text"];
         } else if (tipType == MQTipTypeBotManualRedirect) {
