@@ -87,6 +87,12 @@
  */
 - (void)changeNavReightBtnWithAgentType:(NSString *)agentType hidden:(BOOL)hidden;
 
+
+/**
+ 用户上线
+ */
+- (void)didClientOnline:(BOOL)completion error:(NSError *)error;
+
 #endif
 
 @end

@@ -57,6 +57,7 @@ static CGFloat const kMQChatViewInputBarHeight = 80.0;
 @property (nonatomic, strong) MQRecorderView *displayRecordView;//只用来显示
 @property (nonatomic, assign) BOOL needScrollEnd;//是否需要滚动到底部
 @property (nonatomic, assign) CGRect lastKeyBoardFrameChange; // 上一次的键盘 frame，判断键盘 frame 是否改变
+@property (nonatomic, strong) NSString *noMsgVisitorSendMsg; //无消息访客发送的消息
 
 @end
 
@@ -539,7 +540,19 @@ static CGFloat const kMQChatViewInputBarHeight = 80.0;
     [MQToast showToast:content duration:1.0 window:self.view];
 }
 
-
+- (void)didClientOnline:(BOOL)completion error:(NSError *)error{
+    if (openVisitorNoMessageBool && completion) {
+        self.needScrollEnd = YES;
+        [self.chatViewService startGettingHistoryMessagesFromLastMessage];
+        openVisitorNoMessageBool = NO;
+        if (_noMsgVisitorSendMsg) {
+            [self.chatViewService sendTextMessageWithContent:_noMsgVisitorSendMsg];
+            sendTime = [NSDate timeIntervalSinceReferenceDate];
+            [self chatTableViewScrollToBottomWithAnimated:NO];
+            _noMsgVisitorSendMsg = nil;
+        }
+    }
+}
 
 
 #pragma MQInputBarDelegate
@@ -552,7 +565,12 @@ static CGFloat const kMQChatViewInputBarHeight = 80.0;
         return NO;
     }
     //xlp  T5637
-    [self checkOpenVisitorNoMessageBool];
+    if (openVisitorNoMessageBool) {
+        [MQServiceToViewInterface prepareForChat]; //初始化
+        [self.chatViewService setClientOnline];
+        _noMsgVisitorSendMsg = text;
+        return YES;
+    }
     
     [self.chatViewService sendTextMessageWithContent:text];
     sendTime = [NSDate timeIntervalSinceReferenceDate];
@@ -1247,25 +1265,6 @@ static CGFloat const kMQChatViewInputBarHeight = 80.0;
 
 - (BOOL)checkXlpSocketClose{
     return [[NSUserDefaults standardUserDefaults]boolForKey:@"xlpSocketClose"];
-}
-
-//xlp 在对话规则 打开过滤无消息访客按钮后 刚开始对话 客户未能上线 状态为 初始化
-- (void)checkOpenVisitorNoMessageBool{
-    
-    if (openVisitorNoMessageBool) {
-        [MQServiceToViewInterface prepareForChat]; //初始化
-        
-        
-        [self.chatViewService setClientOnline];
-        //延时2秒 获取所有的历史记录
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            self.needScrollEnd = YES;
-            [self.chatViewService startGettingHistoryMessagesFromLastMessage];
-        });
-        
-        openVisitorNoMessageBool = NO;
-        
-    }
 }
 
 

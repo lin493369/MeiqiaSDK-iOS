@@ -799,7 +799,8 @@ static NSInteger const kMQChatGetHistoryMessageNumber = 20;
     for (id<MQCellModelProtocol> model in self.cellModels) {
         if ([model isKindOfClass:[MQTipsCellModel class]]) {
             MQTipsCellModel *cellModel = (MQTipsCellModel *)model;
-            if (cellModel.tipType == MQTipTypeReply || cellModel.tipType == MQTipTypeBotRedirect || cellModel.tipType == MQTipTypeBotManualRedirect) {
+            // 不删除留言的 tipCell
+            if (cellModel.tipType == MQTipTypeBotRedirect || cellModel.tipType == MQTipTypeBotManualRedirect) {
                 continue;
             }
         }
@@ -854,6 +855,9 @@ static NSInteger const kMQChatGetHistoryMessageNumber = 20;
     __weak typeof(self) weakSelf = self;
     [self.serviceToViewInterface setClientOnlineWithClientId:[MQChatViewConfig sharedConfig].MQClientId success:^(BOOL completion, NSString *agentName, NSString *agentType, NSArray *receivedMessages, NSError *error) {
         __strong typeof (weakSelf) strongSelf = weakSelf;
+        if ([strongSelf.delegate respondsToSelector:@selector(didClientOnline:error:)]) {
+            [strongSelf.delegate didClientOnline:completion error:error];
+        }
         if ([error reason].length == 0) {
             [strongSelf handleClientOnlineWithRreceivedMessages:receivedMessages completeStatus:completion];
         } else {
@@ -866,6 +870,9 @@ static NSInteger const kMQChatGetHistoryMessageNumber = 20;
     __weak typeof(self) weakSelf = self;
     [self.serviceToViewInterface setClientOnlineWithCustomizedId:[MQChatViewConfig sharedConfig].customizedId success:^(BOOL completion, NSString *agentName, NSString *agentType, NSArray *receivedMessages, NSError *error) {
         __strong typeof (weakSelf) strongSelf = weakSelf;
+        if ([strongSelf.delegate respondsToSelector:@selector(didClientOnline:error:)]) {
+            [strongSelf.delegate didClientOnline:completion error:error];
+        }
         if ([error reason].length == 0) {
             [strongSelf handleClientOnlineWithRreceivedMessages:receivedMessages completeStatus:completion];
         } else {
