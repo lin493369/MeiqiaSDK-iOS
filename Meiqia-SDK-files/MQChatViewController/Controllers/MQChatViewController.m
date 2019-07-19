@@ -313,7 +313,8 @@ static CGFloat const kMQChatViewInputBarHeight = 80.0;
 - (void)initChatTableView {
     self.chatTableView = [[MQChatTableView alloc] initWithFrame:chatViewConfig.chatViewFrame style:UITableViewStylePlain];
     self.chatTableView.chatTableViewDelegate = self;
-    
+//    self.chatTableView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
+
     //xlp 修复 发送消息 或者受到消息 会弹一下
     self.chatTableView.estimatedRowHeight = 0;
     self.chatTableView.estimatedSectionFooterHeight = 0;
@@ -392,6 +393,9 @@ static CGFloat const kMQChatViewInputBarHeight = 80.0;
     NSIndexPath *indexPath = [self.chatTableView indexPathForCell: cell];
     if (indexPath) {
         [self.chatTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation: UITableViewRowAnimationFade];
+    }
+    if (indexPath.row == self.chatViewService.cellModels.count - 1) {
+        [self chatTableViewScrollToBottomWithAnimated:NO];
     }
 }
 
